@@ -121,21 +121,26 @@ $Date=$_POST['Date'];
 		 <h3 class="tittle">Розклад руху автобусів</h3>
 				<div class="about-top">
 					<div class="col-md-5 about-top-left">
-					<div class="col-md-6">				
-         <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
-         <i class="fa fa-calendar"></i>&nbsp;
-         <span id="ddd"></span> <i class="fa fa-caret-down"></i>
-        </div>
-        <button id="btn">ok</button>
+					<div class="col-md-6">		
+	<form method="GET">							
+	<div id="reportrange"  style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+	<i class="fa fa-calendar"></i>&nbsp;
+	<input type="hidden"  name="dte" id="dte" value="">
+    <span ></span> <i class="fa fa-caret-down"></i>
+</div>
+		<button id="btn"  name="btndte">ok</button>
+						</form>
 		</div>
 		<div class="col-md-6">
 		Пошук по пункту і місцю призначення
+		<form method="GET">
+		<label for="departure">Пункт від'їзду</label>
+			  <input type="text" id="departure" name="departure">
 		<label for="arrival">Пункт призначення</label>
               <input type="text" id="arrival" name="arrival">
 
-		<label for="departure">Пункт від'їзду</label>
-              <input type="text" id="departure" name="departure">
-		
+			  <button name="search">Пошук</button>
+		</form>
 		</div>
 
 					</div>
@@ -167,46 +172,46 @@ $Date=$_POST['Date'];
 		});
 	</script>
 	-->
+
+
 	<script type="text/javascript">
-	var $pieces = ($('#ddd').text()).split(" - ");
-	var myvar = $pieces[0] + ":" + $pieces[1];
 
-// Show the resulting value
 
-	$('#btn').click(function(){
-		console.log(myvar);
-		//alert( $pieces[0]);
-									});
-	
 	moment.locale('ru');
 $('#datePicker').daterangepicker();
+
 $(function() {
 
     var start = moment().subtract(29, 'days');
     var end = moment();
 
     function cb(start, end) {
-        $('#reportrange span').php(start.format('YYYY/MM/DD') + ' - ' + end.format('YYYY/MM/DD'));
+        $('#reportrange span').html(start.format('MM/DD/YYYY') + ' - ' + end.format('MM/DD/YYYY'));
     }
+
 
     $('#reportrange').daterangepicker({
         startDate: start,
         endDate: end,
         ranges: {
-           'Сьогодні': [moment(), moment()],
-           'Вчора': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-           'Останні 7 днів': [moment().subtract(6, 'days'), moment()],
-           'Останні 30 днів': [moment().subtract(29, 'days'), moment()],
-           'Цей місяць': [moment().startOf('month'), moment().endOf('month')],
-           'Минулий місяць': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+           'Today': [moment(), moment()],
+           'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+           'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+           'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+           'This Month': [moment().startOf('month'), moment().endOf('month')],
+           'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
         }
     }, cb);
+
     cb(start, end);
+
 });
+</script>
+<script type="text/javascript">
+	var text = $('#reportrange span').text();
+$('#dte').val(text);
 
 </script>
-
-
 	<a href="#" id="toTop" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
 <!-- //smooth scrolling -->
 
