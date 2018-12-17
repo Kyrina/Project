@@ -1,4 +1,8 @@
+
+
 <!DOCTYPE html>
+<?php session_start(); 
+if(isset($_SESSION['logged_user'])){ ?>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -16,19 +20,22 @@
 <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <style>
+   .lay{
+    display: ruby-text;
+   }
+   </style>
 </head>
 <body>
+<?php include ('../DB/connect.php');
+
+?>
 <div class="navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container"> <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span
                     class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span> </a>
                     <a class="brand" href="index.php">Кабінет диспетчер</a>
-      <div class="nav-collapse">
-        <ul class="nav pull-right">
-                  <a href="javascript:;">Logout</a>
-         </ul>
-        
-      </div>
+   
       <!--/.nav-collapse --> 
     </div>
     <!-- /container --> 
@@ -41,12 +48,8 @@
     <div class="container">
     <ul class="mainnav">
 						<li class="active"><a href="index.php"><i class="icon-dashboard"></i><span>Dashboard</span> </a> </li>
-						<li><a href="reports.php"><i class="icon-list-alt"></i><span>Reports</span> </a> </li>
-						 <li class="dropdown"><a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-long-arrow-down"></i><span>Drops</span> <b class="caret"></b></a>
-						  <ul class="dropdown-menu">
-									   <li><a href="faq.php">FAQ</a></li>
-						  
-						  </ul>
+						<li><a href="../noauto.php"><i class="icon-list-alt"></i><span>Logout</span> </a> </li>
+						 
     </div>
     <!-- /container --> 
   </div>
@@ -60,140 +63,211 @@
         <div class="span6">
           <div class="widget widget-nopad">
             <div class="widget-header"> <i class="icon-list-alt"></i>
-              <h3> Today's Stats</h3>
+              <h3> Додати водія</h3>
             </div>
             <!-- /widget-header -->
             <div class="widget-content">
               <div class="widget big-stats-container">
                 <div class="widget-content">
-                  <h6 class="bigstats">
-                  Розумна текстовка
-                  </h6>
-                  <div id="big_stats" class="cf">
-                    <div class="stat"> <i class="icon-anchor"></i> <span class="value">851</span> </div>
-                    <!-- .stat -->
-                    
-                    <div class="stat"> <i class="icon-thumbs-up-alt"></i> <span class="value">423</span> </div>
-                    <!-- .stat -->
-                    
-                    <div class="stat"> <i class="icon-twitter-sign"></i> <span class="value">922</span> </div>
-                    <!-- .stat -->
-                    
-                    <div class="stat"> <i class="icon-bullhorn"></i> <span class="value">25%</span> </div>
-                    <!-- .stat --> 
-                  </div>
-                </div>
-                <!-- /widget-content --> 
-                
+                  
+                <form method="POST" >
+              ПІБ водія<input type=text name="name">
+
+
+
+           <button type="submit" name="adddriver">ОК</button>
+              </form>
+<?php 
+if(isset($_POST['adddriver']) && isset($_POST['name'])){
+  $result = $con->query('INSERT INTO `driver`(`id`, `name_driver`) VALUES (NULL,"'.$_POST['name'].'")');
+
+}
+?>
+
+                </div>                
               </div>
             </div>
           </div>
-          <!-- /widget -->
-     
-          <!-- /widget -->
+          
           <div class="widget">
             <div class="widget-header"> <i class="icon-file"></i>
-              <h3> Content</h3>
+              <h3> Додати місто</h3>
+              
             </div>
             <!-- /widget-header -->
             <div class="widget-content">
-           <!--  <?php require("Test.php")?> -->
+          <form method="POST" >
+              Назва міста<input type="text" name="town">
+
+
+
+           <button type="submit" name="addtown">ОК</button>
+              </form>
+
+              <?php 
+if(isset($_POST['addtown']) && isset($_POST['town'])){
+  $result = $con->query('INSERT INTO `town`(`id_town`, `destination`) VALUES (NULL,"'.$_POST['town'].'")');
+
+}
+?>
             </div>
             <!-- /widget-content --> 
           </div>
           <!-- /widget --> 
+          <div class="widget">
+            <div class="widget-header"> <i class="icon-file"></i>
+              <h3> Додати шлях</h3>
+              
+            </div>
+            <!-- /widget-header -->
+            <div class="widget-content">
+          <form method="POST" >
+             
+
+             <div class="formRow labelBox col3 dropDownMobile" id="workDesign">
+
+<input type="text" name="tags" id="workDesignTags"><button type=submit name="addroute">OK</button>
+
+<?php
+     if ($result = $con->query('SELECT * FROM `town` ')) {
+      $resul = $con->query('DELETE FROM `town` WHERE `destination`=""');
+     while ($row = $result->fetch_assoc()) {
+      
+    echo' <label class="lay"><input type="checkbox" name="design" value="'.$row['id_town'].'"><div class="textBox">'.$row['destination'].'</div></label> ';
+     }
+    }
+     ?>
+
+
+</div>
+              </form>
+              <?php
+              
+    if(isset($_POST['addroute']) && isset($_POST['tags'])){
+      $tag = str_replace(",", "-", $_POST['tags']);
+
+      
+   $result = $con->query('INSERT INTO `road`(`id`, `route`) VALUES (NULL,"'.$tag.'")');
+              
+              }
+              ?>
+             
+
+
+            </div>
+            <!-- /widget-content --> 
+          </div>
+
+
         </div>
         <!-- /span6 -->
         <div class="span6">
           <div class="widget">
             <div class="widget-header"> <i class="icon-bookmark"></i>
-              <h3>Додати автобус,закріпити маршрут та водія</h3>
+              <h3>Додати автобус</h3>
             </div>
             <!-- /widget-header -->
             <div class="widget-content">
+            <form method="POST">
             <label for="namebus">Назва(марка або ще щось)</label>
               <input type="text" id="namebus" name="namebus">
             <label for="sitcount">Кількість місць(10-100):</label>
               <input type="number" id="sitcount" name="sitcount" min="10" max="100">
-              <label for="select">Оберіть маршрут</label>
-              <select name="select" id="select"> <!--Supplement an id here instead of using 'name'-->
-                 <option value="value1">Значение 1</option> 
-                 <option value="value2" selected>Значение 2</option>
-                 <option value="value3">Значение 3</option>
-              </select>
+              
 
               <label for="driver">Оберіть водія</label>
               <select name="driver" id="driver"> <!--Supplement an id here instead of using 'name'-->
-                 <option value="value0">Значение</option> 
-                 <option value="value01" selected>Значение</option>
-                 <option value="value03">Значение </option>
-              </select>
-              <button>OK</button>
+    <?php
+     if ($result = $con->query('SELECT * FROM `driver` ')) {
+     while ($row = $result->fetch_assoc()) {
+              echo'   <option value='.$row ['name_driver'].'>'.$row ['name_driver'].'</option> ';
+     }
+    }
+     ?>
+                
+              </select><br>
+              <button type="submit" name="ok">OK</button>
+              </form>
+              <?php
+              
+if(isset($_POST['ok']) && isset($_POST['driver']) && isset($_POST['namebus'])&& isset($_POST['sitcount'])){
+  $result = $con->query('INSERT INTO `bus`(`id`, `sit_count`, `driver`, `mark`) VALUES (NULL,"'.$_POST['sitcount'].'","'.$_POST['driver'].'","'.$_POST['namebus'].'")');
+
+}
+?>
+
             </div>
             <!-- /widget-content --> 
           </div>
           <!-- /widget -->
           <div class="widget">
             <div class="widget-header"> <i class="icon-signal"></i>
-              <h3> Додати новий маршрут</h3>
+              <h3> Додати пункт в рокзклад</h3>
+
             </div>
-            <!-- /widget-header -->
             <div class="widget-content">
-              <canvas id="area-chart" class="chart-holder" height="250" width="538"> </canvas>
-              <!-- /area-chart --> 
-            </div>
-            <!-- /widget-content --> 
-          </div>
-          <!-- /widget -->
-          <div class="widget widget-table action-table">
-            <div class="widget-header"> <i class="icon-th-list"></i>
-              <h3>A Table Example</h3>
-            </div>
             <!-- /widget-header -->
-            <div class="widget-content">
-              <table class="table table-striped table-bordered">
-                <thead>
-                  <tr>
-                    <th> Free Resource </th>
-                    <th> Download</th>
-                    <th class="td-actions"> </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td> Fresh Web Development Resources </td>
-                    <td> http://www.egrappler.com/ </td>
-                    <td class="td-actions"><a href="javascript:;" class="btn btn-small btn-success"><i class="btn-icon-only icon-ok"> </i></a><a href="javascript:;" class="btn btn-danger btn-small"><i class="btn-icon-only icon-remove"> </i></a></td>
-                  </tr>
-                  <tr>
-                    <td> Fresh Web Development Resources </td>
-                    <td> http://www.egrappler.com/ </td>
-                    <td class="td-actions"><a href="javascript:;" class="btn btn-small btn-success"><i class="btn-icon-only icon-ok"> </i></a><a href="javascript:;" class="btn btn-danger btn-small"><i class="btn-icon-only icon-remove"> </i></a></td>
-                  </tr>
-                  <tr>
-                    <td> Fresh Web Development Resources </td>
-                    <td> http://www.egrappler.com/ </td>
-                    <td class="td-actions"><a href="javascript:;" class="btn btn-small btn-success"><i class="btn-icon-only icon-ok"> </i></a><a href="javascript:;" class="btn btn-danger btn-small"><i class="btn-icon-only icon-remove"> </i></a></td>
-                  </tr>
-                  <tr>
-                    <td> Fresh Web Development Resources </td>
-                    <td> http://www.egrappler.com/ </td>
-                    <td class="td-actions"><a href="javascript:;" class="btn btn-small btn-success"><i class="btn-icon-only icon-ok"> </i></a><a href="javascript:;" class="btn btn-danger btn-small"><i class="btn-icon-only icon-remove"> </i></a></td>
-                  </tr>
-                  <tr>
-                    <td> Fresh Web Development Resources </td>
-                    <td> http://www.egrappler.com/ </td>
-                    <td class="td-actions"><a href="javascript:;" class="btn btn-small btn-success"><i class="btn-icon-only icon-ok"> </i></a><a href="javascript:;" class="btn btn-danger btn-small"><i class="btn-icon-only icon-remove"> </i></a></td>
-                  </tr>
+            <form method=POST>
+Ціна білета<input type="text" name="cost"><br>
+Час відправки<input type="text" name="deptime" placeholder="11:11"><br>
+Час прибуття<input type="text" name="arrtime"  placeholder="22:22"><br>
+Дата відправки<input type="text" name="depdate"  placeholder="2018-11-02" ><br>
+Дата прибуття<input type="text" name="arrdate"  placeholder="2018-11-03" ><br>
+<label for="select">Оберіть маршрут</label>
+<select name="select" id="select"> <!--Supplement an id here instead of using 'name'-->
+            
+            <?php  
+            $route=array();
+             if ($resul = $con->query('SELECT * FROM `route` WHERE 1')) {
+            while ($roww = $resul->fetch_assoc()) {
+            $pieces = explode("-", $roww['route']);  
+            for($i=0;$i<count($pieces);$i++){           
+              if ($result2 = $con->query("SELECT * FROM `town` WHERE `id_town`=".$pieces[$i])) {
+                while ($row2 = $result2->fetch_assoc()) {
+                  $route[]=$row2['destination'];
+          
+                }
+            }        
+          }
+          echo "<option value=".$roww['route'].">";
+          foreach ($route as &$value) {
+           echo $value." " ;
+        }
+         echo "</option> ";
+          $route=array();}}
+                 ?>
+               
+              </select><br>
+
+ <label for="buss">Оберіть автобус</label>
+              <select name="buss" id="buss"> <!--Supplement an id here instead of using 'name'-->
+    <?php
+     if ($result = $con->query('SELECT * FROM `bus` ')) {
+     while ($row = $result->fetch_assoc()) {
+              echo'   <option value='.$row ['mark'].' місць '.$row ['sit_count'].'>'.$row ['mark'].' місць '.$row ['sit_count'].'</option> ';
+     }
+    }
+     ?>
                 
-                </tbody>
-              </table>
-            </div>
+              </select><br>
+              <button type="submit" name="punkt">OK</button>
+
+              </form>
+              <?php
+           
+              if(isset($_POST['punkt'])){
+                $result = $con->query('INSERT INTO `route`(`route_id`, `route`, `departureTime`, `arrivalTime`, `price`, `departureDate`, `arrivalDate`, `bus`) 
+                VALUES (NULL,"'.$_POST['select'].'","'.$_POST['deptime'].'","'.$_POST['arrtime'].'","'.$_POST['cost'].'","'.$_POST['depdate'].'","'.$_POST['arrdate'].'","'.$_POST['buss'].'")');
+              
+              }
+              ?>
+
+
+
             <!-- /widget-content --> 
           </div>
-          <!-- /widget --> 
-      
           <!-- /widget -->
+  
         </div>
         <!-- /span6 --> 
       </div>
@@ -229,126 +303,26 @@
 <script language="javascript" type="text/javascript" src="js/full-calendar/fullcalendar.min.js"></script>
  
 <script src="js/base.js"></script> 
-<script>     
+<script  type="text/javascript">
+var values = [];
 
-        var lineChartData = {
-            labels: ["January", "February", "March", "April", "May", "June", "July"],
-            datasets: [
-				{
-				    fillColor: "rgba(220,220,220,0.5)",
-				    strokeColor: "rgba(220,220,220,1)",
-				    pointColor: "rgba(220,220,220,1)",
-				    pointStrokeColor: "#fff",
-				    data: [65, 59, 90, 81, 56, 55, 40]
-				},
-				{
-				    fillColor: "rgba(151,187,205,0.5)",
-				    strokeColor: "rgba(151,187,205,1)",
-				    pointColor: "rgba(151,187,205,1)",
-				    pointStrokeColor: "#fff",
-				    data: [28, 48, 40, 19, 96, 27, 100]
-				}
-			]
-
+$("#workDesign label").on("click", function(){
+        var input = $(this).children("input");
+        var tag = $(this).text();
+        var i = values.indexOf(tag);
+        if (input.prop("checked"))  {
+            input.parent().addClass("selected");
+            if (i==-1) values.push(tag);
+           
+        } else {
+            if (i>-1) values.splice(i, 1);
+            input.parent().removeClass("selected");
         }
+        $("#workDesignTags").val(values.join(", "));
+    });
 
-        var myLine = new Chart(document.getElementById("area-chart").getContext("2d")).Line(lineChartData);
-
-
-        var barChartData = {
-            labels: ["January", "February", "March", "April", "May", "June", "July"],
-            datasets: [
-				{
-				    fillColor: "rgba(220,220,220,0.5)",
-				    strokeColor: "rgba(220,220,220,1)",
-				    data: [65, 59, 90, 81, 56, 55, 40]
-				},
-				{
-				    fillColor: "rgba(151,187,205,0.5)",
-				    strokeColor: "rgba(151,187,205,1)",
-				    data: [28, 48, 40, 19, 96, 27, 100]
-				}
-			]
-
-        }    
-
-        $(document).ready(function() {
-        var date = new Date();
-        var d = date.getDate();
-        var m = date.getMonth();
-        var y = date.getFullYear();
-        var calendar = $('#calendar').fullCalendar({
-          header: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'month,agendaWeek,agendaDay'
-          },
-          selectable: true,
-          selectHelper: true,
-          select: function(start, end, allDay) {
-            var title = prompt('Event Title:');
-            if (title) {
-              calendar.fullCalendar('renderEvent',
-                {
-                  title: title,
-                  start: start,
-                  end: end,
-                  allDay: allDay
-                },
-                true // make the event "stick"
-              );
-            }
-            calendar.fullCalendar('unselect');
-          },
-          editable: true,
-          events: [
-            {
-              title: 'All Day Event',
-              start: new Date(y, m, 1)
-            },
-            {
-              title: 'Long Event',
-              start: new Date(y, m, d+5),
-              end: new Date(y, m, d+7)
-            },
-            {
-              id: 999,
-              title: 'Repeating Event',
-              start: new Date(y, m, d-3, 16, 0),
-              allDay: false
-            },
-            {
-              id: 999,
-              title: 'Repeating Event',
-              start: new Date(y, m, d+4, 16, 0),
-              allDay: false
-            },
-            {
-              title: 'Meeting',
-              start: new Date(y, m, d, 10, 30),
-              allDay: false
-            },
-            {
-              title: 'Lunch',
-              start: new Date(y, m, d, 12, 0),
-              end: new Date(y, m, d, 14, 0),
-              allDay: false
-            },
-            {
-              title: 'Birthday Party',
-              start: new Date(y, m, d+1, 19, 0),
-              end: new Date(y, m, d+1, 22, 30),
-              allDay: false
-            },
-            {
-              title: 'EGrappler.com',
-              start: new Date(y, m, 28),
-              end: new Date(y, m, 29),
-              url: 'http://EGrappler.com/'
-            }
-          ]
-        });
-      });
-    </script><!-- /Calendar -->
+</script> 
 </body>
+<?php } ?>
 </html>
+ 

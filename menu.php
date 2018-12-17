@@ -24,6 +24,11 @@ $menu = array(
         'title' => 'Кабінет',
         'url' => 'admin/index.php',
        
+    ),
+    array(
+        'title' => 'Вийти',
+        'url' => 'noauto.php',
+       
     )
 );   
 }else

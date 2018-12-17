@@ -1,6 +1,4 @@
-<?if(isset($_POST['Date']))
-$Date=$_POST['Date'];
-?>
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -122,18 +120,17 @@ $Date=$_POST['Date'];
 				<div class="about-top">
 					<div class="col-md-5 about-top-left">
 					<div class="col-md-6">		
-	<form method="GET">							
+	<form method="POST" id="my_form">					
 	<div id="reportrange"  style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
 	<i class="fa fa-calendar"></i>&nbsp;
-	<input type="hidden"  name="dte" id="dte" value="">
-    <span ></span> <i class="fa fa-caret-down"></i>
+    <span class="mine" name="mydate"></span> <i class="fa fa-caret-down"></i>
 </div>
-		<button id="btn"  name="btndte">ok</button>
+		<button id="btn" name="btndte">OK</button>
 						</form>
 		</div>
 		<div class="col-md-6">
 		Пошук по пункту і місцю призначення
-		<form method="GET">
+		<form method="POST">
 		<label for="departure">Пункт від'їзду</label>
 			  <input type="text" id="departure" name="departure">
 		<label for="arrival">Пункт призначення</label>
@@ -186,7 +183,7 @@ $(function() {
     var end = moment();
 
     function cb(start, end) {
-        $('#reportrange span').html(start.format('MM/DD/YYYY') + ' - ' + end.format('MM/DD/YYYY'));
+        $('#reportrange span').html(start.format('YYYY/MM/DD') + ' - ' + end.format('YYYY/MM/DD'));
     }
 
 
@@ -208,9 +205,12 @@ $(function() {
 });
 </script>
 <script type="text/javascript">
-	var text = $('#reportrange span').text();
-$('#dte').val(text);
-
+$(document).ready(function(){
+   $("#my_form").on("submit", function () {
+        var hvalue = $('.mine').text();
+        $(this).append("<input type='hidden' name='mydate' value=' " + hvalue + " '/>");
+    });
+});
 </script>
 	<a href="#" id="toTop" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
 <!-- //smooth scrolling -->

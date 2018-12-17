@@ -1,4 +1,7 @@
+<?php session_start(); ?>
+<?php include ('DB/connect.php');
 
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,6 +22,7 @@
 <!-- //for-mobile-apps -->	
 <!-- js -->
 <script type="text/javascript" src="js/jquery.min.js"></script>
+
 <!-- js -->
 <script src="js/modernizr.custom.js"></script>
 <!-- start-smoth-scrolling -->
@@ -32,12 +36,11 @@
 		});
 	});
 </script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
 <!-- start-smoth-scrolling -->
 </head>
 <body>
-	<?php
-	include 'LiqPay.php';
-	?>
+
 <!-- top header -->
 <div class="banner page-head">
 	<div class="container">
@@ -55,9 +58,7 @@
 				</div>
 				<div class="clearfix"></div>
 				<div class="top-logo">
-					<a href="index.php"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span>HEAVY <span>INDUSTRY</span>
-					<i>A Small Scale Project</i>
-					
+					<a href="index.php"><span class="glyphicon glyphicon-road" aria-hidden="true"></span>РОЗКЛАД<span>РУХУ АВТОБУСІВ</span>
 					</a>
 				</div>
 		</div>
@@ -114,68 +115,70 @@
 </div>
 <!-- //top header -->
 <!--start-about-->
-<div class="gallery1">
+
 	<div class="container">
-	  <h3 class="tittle">MACHINERY</h3>
-					<script src="js/jquery.chocolat.js"></script>
-					
-					<!--light-box-files -->
-					<script type="text/javascript">
-					$(function() {
-						$('.moments-bottom a').Chocolat();
-					});
-					</script>
-		<div class="moments-bottom">
-					<div class="col-md-4 moments-left">
-						<a class="mask1" href="images/g1.jpg">
-							<img src="images/g1.jpg" class="img-responsive zoom-img" alt="name" />
-						</a>
-					</div>
-					<div class="col-md-4 moments-left">
-						<a class="mask1" href="images/g2.jpg">
-							<img src="images/g2.jpg" class="img-responsive zoom-img" alt="name" />
-						</a>
-					</div>
-					<div class="col-md-4 moments-left">
-						<a class="mask1" href="images/g3.jpg">
-							<img src="images/g3.jpg" class="img-responsive zoom-img" alt="name" />
-						</a>
-					</div>
-					<div class="col-md-4 moments-left">
-						<a class="mask1" href="images/g4.jpg">
-							<img src="images/g4.jpg" class="img-responsive zoom-img" alt="name" />
-						</a>
-					</div>
-					<div class="col-md-4 moments-left">
-						<a class="mask1" href="images/g5.jpg">
-							<img src="images/g5.jpg" class="img-responsive zoom-img" alt="name" />
-						</a>
-					</div>
-					<div class="col-md-4 moments-left">
-						<a class="mask1" href="images/g6.jpg">
-							<img src="images/g6.jpg" class="img-responsive zoom-img" alt="name" />
-						</a>
-					</div>
-					<div class="col-md-4 moments-left">
-						<a class="mask1" href="images/g1.jpg">
-							<img src="images/g1.jpg" class="img-responsive zoom-img" alt="name" />
-						</a>
-					</div>
-					<div class="col-md-4 moments-left">
-						<a class="mask1" href="images/g2.jpg">
-							<img src="images/g2.jpg" class="img-responsive zoom-img" alt="name" />
-						</a>
-					</div>
-					<div class="col-md-4 moments-left">
-						<a class="mask1" href="images/g3.jpg">
-							<img src="images/g3.jpg" class="img-responsive zoom-img" alt="name" />
-						</a>
-					</div>
+	  <h3 class="tittle">Бронювання</h3>
+	  <div class="col-10">
+
+	  <input id='price' type="text" placeholder="Сума оплати" /><br>
+	  <input id='desc' type="text" placeholder="ПІБ" /><br>
+	  <label for="select">Маршрут</label>
+		<select name="select" id="select"> <!--Supplement an id here instead of using 'name'-->
+            
+            <?php  
+            $route=array();
+             if ($resul = $con->query('SELECT * FROM `route` WHERE 1')) {
+            while ($roww = $resul->fetch_assoc()) {
+            $pieces = explode("-", $roww['route']);  
+            for($i=0;$i<count($pieces);$i++){           
+              if ($result2 = $con->query("SELECT * FROM `town` WHERE `id_town`=".$pieces[$i])) {
+                while ($row2 = $result2->fetch_assoc()) {
+                  $route[]=$row2['destination'];
+          
+                }
+            }        
+          }
+          echo "<option value=".$roww['price'].">";
+          foreach ($route as &$value) {
+           echo $value." " ;
+        }
+         echo " ціна ".$roww['price']." грн</option> ";
+		  $route=array();}
+		}
+                 ?>
+               
+              </select><br>
+
+
+
+	  <button type="button" onclick=" make_pay() " class="btn btn_green">Оплатити</button>
+	  <span id='form_responce' style='display:none;'></span>
+	   </div>
 					<div class="clearfix"> </div>
 			</div>
-	</div>
-</div>
-<!--gallery-->
+	
+
+<script type="text/javascript"> 
+function make_pay(){
+if (($('#price').val() != $('#select').val())||($('#price').val() == "") || (!/^\d+$/.test($('#price').val()))){ //Если в форму ничего не введено и нажата нопка ОК или введены не цифры, то
+$('#price').css('border-color','red'); //граница поля СУММЫ станет красным
+} else
+$.get("payment/makeform.php", //Если ВСЕ ОК — Запросим сгенерированную форму без перезагрузки страницы
+{
+price: $('#price').val(), //В качестве параметра передадим сумму (введенную в поле)
+desc: $('#desc').val(),
+},
+onAjaxSuccess //Функция, которая сработает если ВСЕ ОК
+);
+
+function onAjaxSuccess(data)
+{
+// Здесь мы получаем данные в переменную data
+$('#form_responce').html(data); //И передаем эту форму в невидимое поле form_responce
+$('#form_responce form').submit() //Сразу же автоматически сабмитим эту форму, так как всеравно клиент её не видит
+}
+}
+</script>
 
 <!-- copy -->
 <div class="div2">
@@ -186,6 +189,7 @@
 <!-- copy -->
 <!-- for bootstrap working -->
 		<script src="js/bootstrap.js"></script>
+		
 <!-- //for bootstrap working -->
 <!-- smooth scrolling -->
 	<script type="text/javascript">

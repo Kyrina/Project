@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1
--- Час створення: Гру 02 2018 р., 18:39
+-- Час створення: Гру 17 2018 р., 03:06
 -- Версія сервера: 10.1.31-MariaDB
 -- Версія PHP: 7.2.3
 
@@ -43,26 +43,62 @@ INSERT INTO `admin` (`login`, `password`) VALUES
 -- --------------------------------------------------------
 
 --
--- Структура таблиці `booking`
+-- Структура таблиці `bus`
 --
 
-CREATE TABLE `booking` (
-  `route_id` int(11) NOT NULL,
-  `clientFIO` text NOT NULL,
-  `ticket_count` int(11) NOT NULL
+CREATE TABLE `bus` (
+  `id` int(11) NOT NULL,
+  `sit_count` text NOT NULL,
+  `driver` text NOT NULL,
+  `mark` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Дамп даних таблиці `bus`
+--
+
+INSERT INTO `bus` (`id`, `sit_count`, `driver`, `mark`) VALUES
+(1, '55', 'SNN', 'mrk'),
+(2, '10', 'SNN', 'lll'),
+(3, '10', 'SNN', 'lll'),
+(4, '10', 'SNN', 'lll');
 
 -- --------------------------------------------------------
 
 --
--- Структура таблиці `paydesk`
+-- Структура таблиці `driver`
 --
 
-CREATE TABLE `paydesk` (
-  `money` int(11) NOT NULL,
-  `date` date NOT NULL,
-  `info` text NOT NULL
+CREATE TABLE `driver` (
+  `id` int(11) NOT NULL,
+  `name_driver` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Дамп даних таблиці `driver`
+--
+
+INSERT INTO `driver` (`id`, `name_driver`) VALUES
+(1, 'SNN'),
+(4, 'Ð’Ð¾Ð´Ñ–Ð¹_2');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблиці `road`
+--
+
+CREATE TABLE `road` (
+  `id` int(11) NOT NULL,
+  `route` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Дамп даних таблиці `road`
+--
+
+INSERT INTO `road` (`id`, `route`) VALUES
+(1, 'Odesa- Lviv- Uzhorod- Kuiv');
 
 -- --------------------------------------------------------
 
@@ -77,17 +113,18 @@ CREATE TABLE `route` (
   `arrivalTime` text NOT NULL,
   `price` int(11) NOT NULL,
   `departureDate` date NOT NULL,
-  `arrivalDate` date NOT NULL
+  `arrivalDate` date NOT NULL,
+  `bus` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Дамп даних таблиці `route`
 --
 
-INSERT INTO `route` (`route_id`, `route`, `departureTime`, `arrivalTime`, `price`, `departureDate`, `arrivalDate`) VALUES
-(1, '1-2-3-5', '11:00', '18:00', 123, '2018-11-22', '2018-11-22'),
-(2, '2-3-5', '23:00', '06:00', 153, '2018-11-21', '2018-11-22'),
-(3, '1-2-3', '04:25', '10:00', 75, '2018-11-22', '2018-11-22');
+INSERT INTO `route` (`route_id`, `route`, `departureTime`, `arrivalTime`, `price`, `departureDate`, `arrivalDate`, `bus`) VALUES
+(1, '1-2-3-5', '11:00', '18:00', 123, '2018-11-22', '2018-11-22', 0),
+(2, '2-3-5', '23:00', '06:00', 153, '2018-11-21', '2018-11-22', 0),
+(3, '1-2-3', '04:25', '10:00', 75, '2018-11-22', '2018-11-22', 0);
 
 -- --------------------------------------------------------
 
@@ -108,11 +145,30 @@ INSERT INTO `town` (`id_town`, `destination`) VALUES
 (1, 'Uzhorod'),
 (2, 'Lviv'),
 (3, 'Odesa'),
-(5, 'Kuiv');
+(5, 'Kuiv'),
+(6, 'Chop');
 
 --
 -- Індекси збережених таблиць
 --
+
+--
+-- Індекси таблиці `bus`
+--
+ALTER TABLE `bus`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Індекси таблиці `driver`
+--
+ALTER TABLE `driver`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Індекси таблиці `road`
+--
+ALTER TABLE `road`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Індекси таблиці `route`
@@ -131,6 +187,24 @@ ALTER TABLE `town`
 --
 
 --
+-- AUTO_INCREMENT для таблиці `bus`
+--
+ALTER TABLE `bus`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT для таблиці `driver`
+--
+ALTER TABLE `driver`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT для таблиці `road`
+--
+ALTER TABLE `road`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT для таблиці `route`
 --
 ALTER TABLE `route`
@@ -140,7 +214,7 @@ ALTER TABLE `route`
 -- AUTO_INCREMENT для таблиці `town`
 --
 ALTER TABLE `town`
-  MODIFY `id_town` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_town` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
